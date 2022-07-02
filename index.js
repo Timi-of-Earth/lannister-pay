@@ -5,14 +5,14 @@ const app = express();
 app.use(express.json());
 
 app.get('/', (req, res) => {
-    res.send('Compute')
+    res.send('Lannister Pay')
 })
 
 app.post('/split-payments/compute', (req, res) => {
     const transaction = req.body;
     
     if (transaction.SplitInfo.length > 20 || transaction.SplitInfo.length < 1 ) {
-        return res.status(400).send('Bad request');
+        return res.status(400).send('Bad request, SplitInfo array can contain a minimum of 1 split entity and a maximum of 20 entities');
     }
 
     let flats = [];
@@ -22,7 +22,7 @@ app.post('/split-payments/compute', (req, res) => {
 
     transaction.SplitInfo.forEach((entity) => {
         if (entity.SplitValue < 0) {
-            return res.status(400).send('Bad request');
+            return res.status(400).send('Bad request, value cannot be less than zero');
         }
         if (entity.SplitType === "FLAT") {
             flats.push(entity)
@@ -48,7 +48,7 @@ app.post('/split-payments/compute', (req, res) => {
         response.SplitBreakdown.push(entryResponse);
         response.Balance -= entryResponse.Amount;
         if (response.Balance < 0) {
-            return res.status(400).send('Bad request');
+            return res.status(400).send('Bad request, balance cannot be less than zero');
         };     
     });
 
@@ -60,7 +60,7 @@ app.post('/split-payments/compute', (req, res) => {
         response.SplitBreakdown.push(entryResponse);
         response.Balance -= entryResponse.Amount;
         if (response.Balance < 0) {
-            return res.status(400).send('Bad request');
+            return res.status(400).send('Bad request, balance cannot be less than zero');
         }       
     });
 
@@ -73,7 +73,7 @@ app.post('/split-payments/compute', (req, res) => {
           response.SplitBreakdown.push(entryResponse);
           response.Balance -= entryResponse.Amount;
           if (response.Balance < 0) {
-            return res.status(400).send('Bad request');
+            return res.status(400).send('Bad request, balance cannot be less than zero');
         }       
     });
 
